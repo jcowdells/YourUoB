@@ -1,0 +1,23 @@
+{
+	"manifest_version": 3,
+	"name": "YourUoB",
+	"version": "1.0",
+	"description": "Give you more control over your university portal.",
+	"icons": {
+
+	},
+	"browser_specific_settings": {
+		"gecko": {
+			"id": "your_uob@legendmixer.net",
+			"data_collection_permissions": {
+				"required": ["none"]
+			}
+		}	
+	},
+	"content_scripts": [
+		{
+			"matches": ["*://*.bham.ac.uk/*"],
+			"js": ["your_uob.js"]
+		}
+	]
+}
