@@ -1,0 +1,25 @@
+{
+    "connectorStatus": [
+        {
+            "name": "Office365Graph",
+            "noResults": 0,
+            "failed": false,
+            "requiresAuth": false
+        },
+        {
+            "name": "Canvas",
+            "noResults": 1,
+            "failed": false,
+            "requiresAuth": false
+        },
+        {
+            "name": "MyTimetable",
+            "noResults": 8,
+            "failed": false,
+            "requiresAuth": false
+        }
+    ],
+    "noStorageResults": 0,
+    "storageQueryFailed": false,
+    "results": []
+}
