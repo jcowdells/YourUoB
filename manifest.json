@@ -17,7 +17,9 @@
 	"content_scripts": [
 		{
 			"matches": ["*://*.bham.ac.uk/*"],
-			"js": ["main.js", "calendar.js"],
+			"js": [
+                "main.js", "calendar.js"
+            ],
 			"world": "MAIN"
 		}
 	]

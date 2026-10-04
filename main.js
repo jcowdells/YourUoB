@@ -1,23 +1,45 @@
-var urlMap = {};
+var urlRequestMap = {};
+var urlResponseMap = {};
 
-function addURLMapping(method, url, mapping) {
+function addURLMapping(map, method, url, mapping) {
     method = method.toUpperCase();
 
     // if no subsection created for this method, then dont bother
-    if (!urlMap.hasOwnProperty(method))
-        urlMap[method] = [];
+    if (!map.hasOwnProperty(method))
+        map[method] = [];
 
-    urlMap[method].push({
+    map[method].push({
         "url": new RegExp(url, "i"),
         "mapping": mapping
     });
 }
 
-function callbackURLMapping(method, url, status, response) {
+function addURLRequestMapping(method, url, mapping) {
+    addURLMapping(urlRequestMap, method, url, mapping);
+}
+
+function callbackURLRequestMapping(method, url) {
     method = method.toUpperCase();
 
-    if (urlMap.hasOwnProperty(method)) {
-        for (let mapping of urlMap[method]) {
+    if (urlRequestMap.hasOwnProperty(method)) {
+        for (let mapping of urlRequestMap[method]) {
+            if (mapping.url.test(url))
+                return mapping.mapping(method, url);
+        }
+    }
+
+    return [method, url];
+}
+
+function addURLResponseMapping(method, url, mapping) {
+    addURLMapping(urlResponseMap, method, url, mapping);
+}
+
+function callbackURLResponseMapping(method, url, status, response) {
+    method = method.toUpperCase();
+
+    if (urlResponseMap.hasOwnProperty(method)) {
+        for (let mapping of urlResponseMap[method]) {
             if (mapping.url.test(url))
                 return mapping.mapping(method, url, status, response);
         }
@@ -26,6 +48,7 @@ function callbackURLMapping(method, url, status, response) {
     return [status, response];
 }
 
+/* ===== This code is not needed yet? =====
 // Backup the real fetch API
 const originalFetch = window.fetch;
 
@@ -66,6 +89,7 @@ window.fetch = async (...args) => {
     throw error;
   }
 };
+*/
 
 // Backup original XHR methods
 const originalOpen = window.XMLHttpRequest.prototype.open;
@@ -73,31 +97,34 @@ const originalSend = window.XMLHttpRequest.prototype.send;
 
 // 1. Override open() to log and save request details
 window.XMLHttpRequest.prototype.open = function (method, url, ...args) {
-  this._interceptorMethod = method;
-  this._interceptorUrl = url;
-  
-  console.log(`[XHR Request] ${method} ${url}`);
-  return originalOpen.apply(this, [method, url, ...args]);
+    // yoooo im doin the damn thing (and yes, it's pantha)
+    this._interceptorMethod = method;
+    this._interceptorUrl = url;
+
+    // overwrite method and response if wanted
+    [method, url] = callbackURLRequestMapping(method, url);
+
+    return originalOpen.apply(this, [method, url, ...args]);
 };
 
 // 2. Override send() to capture response data upon completion
 window.XMLHttpRequest.prototype.send = function (body) {
-  this.addEventListener('readystatechange', function () {
+    this.addEventListener('readystatechange', function () {
 
-    if (!(this.readyState === 4))
-        return;
+        if (!(this.readyState === 4))
+            return;
 
-    const method = this._interceptorMethod;
-    const url = this._interceptorUrl;
+        const method = this._interceptorMethod;
+        const url = this._interceptorUrl;
 
-    let status;
-    let responseText
-    [status, responseText] = callbackURLMapping(method, url, this.status, this.responseText);
+        let status;
+        let responseText
+        [status, responseText] = callbackURLResponseMapping(method, url, this.status, this.responseText);
 
-    Object.defineProperty(this, "status", { value: status });
-    Object.defineProperty(this, "responseText", { value: responseText });
-    Object.defineProperty(this, "response", { value: responseText });
-  });
+        Object.defineProperty(this, "status", { value: status });
+        Object.defineProperty(this, "responseText", { value: responseText });
+        Object.defineProperty(this, "response", { value: responseText });
+    });
 
-  return originalSend.apply(this, arguments);
+    return originalSend.apply(this, arguments);
 };
