@@ -29,8 +29,6 @@ addURLRequestMapping("GET", "api.myday.cloud/legacy/api/aggregate/v2/calendarite
 
 // on calendar data download
 addURLResponseMapping("GET", "api.myday.cloud/legacy/api/aggregate/v2/calendaritem.*", (method, url, status, response) => {
-    console.log(response);
-
     try {
         // parse JSON data
         const jsonData = JSON.parse(response);

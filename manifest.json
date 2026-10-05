@@ -18,7 +18,7 @@
 		{
 			"matches": ["*://*.bham.ac.uk/*"],
 			"js": [
-                "main.js", "calendar.js"
+                "main.js", "calendar.js", "homepage.js"
             ],
 			"world": "MAIN"
 		}
