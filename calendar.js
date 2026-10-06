@@ -52,6 +52,10 @@ addURLResponseMapping("GET", "api.myday.cloud/legacy/api/aggregate/v2/calendarit
             return itemEndDate.getTime() > startDate.getTime() && itemStartDate.getTime() < endDate.getTime();
         });
 
+        for (let item of filteredEvents) {
+            item["ItemLink"] += `&id=${item["Subject"]}`
+        }
+
         // reset output back to how it was
         jsonData["results"] = filteredEvents;
 
@@ -61,4 +65,47 @@ addURLResponseMapping("GET", "api.myday.cloud/legacy/api/aggregate/v2/calendarit
     }
 
     return [status, response];
+});
+
+function onEventOpen(eventId) {
+    const modalTitle = document.getElementById("event-modal-title");
+    node = modalTitle.parentNode.firstChild;
+
+    while (node) {
+        if (node !== modalTitle && node.nodeType === Node.ELEMENT_NODE && node.tagName === "A") {
+            console.log(node.href);
+        } 
+        node = node.nextElementSibling || node.nextSibling;
+    }
+}
+
+function onEventClose(eventId) {
+    console.log("Close Event");
+}
+
+// calendar app stuff
+MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
+let modal_active = false;
+
+var observer = new MutationObserver(function(mutations, observer) {
+    for (let mutation of mutations) {
+        if (mutation.target.classList.contains("modal-backdrop")) {
+            if (mutation.target.classList.contains("in")) {
+                if (!modal_active)
+                    onEventOpen(0);
+                modal_active = true;
+            } else {
+                if (modal_active)
+                    onEventClose(0);
+                modal_active = false;                
+            }
+        }
+    }
+});
+
+// define what element should be observed by the observer
+// and what types of mutations trigger the callback
+observer.observe(document, {
+  subtree: true,
+  attributes: true
 });
