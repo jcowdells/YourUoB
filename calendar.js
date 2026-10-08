@@ -77,6 +77,43 @@ function onEventOpen(eventId) {
         } 
         node = node.nextElementSibling || node.nextSibling;
     }
+
+    const modalBody = document.getElementById("event-modal-body");
+
+    // create divider elements
+    const dividerUl = document.createElement("ul");
+    const dividerP = document.createElement("p");
+    const dividerLine = document.createElement("div");
+    dividerLine.classList.add("line");
+    dividerLine.classList.add("line-dashed");
+    dividerLine.classList.add("line-lg");
+    dividerLine.classList.add("b-b");
+    dividerLine.role = "separator";
+    dividerLine.ariaHidden = "false";
+    modalBody.appendChild(dividerUl);
+    modalBody.appendChild(dividerP);
+    modalBody.appendChild(dividerLine);
+
+    // create edit div
+    const editDiv = document.createElement("div")
+    editDiv.classList.add("cc-event-description");
+    editDiv.tabindex = "0";
+    modalBody.appendChild(editDiv);
+
+    // create title
+    const titleP = document.createElement("p");
+    titleP.classList.add("text-muted");
+    titleP.textContent = "Edit:";
+    editDiv.appendChild(titleP);
+
+
+    // Use browser.runtime.getURL (or chrome.runtime.getURL)
+    const htmlText = getResource("edit_form.html").then(htmlText => {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(htmlText, "text/html");
+        console.log(doc);
+        editDiv.appendChild(doc.body.firstChild);
+    });
 }
 
 function onEventClose(eventId) {

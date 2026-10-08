@@ -1,0 +1,218 @@
+<div class="calendar-edit-form-wrapper">
+  <style>
+    /* Scoped styles - container styling removed */
+    .calendar-edit-form-wrapper {
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --text-main: #111827;
+      --text-muted: #6b7280;
+      --border-color: #e5e7eb;
+
+      font-family: arial, sans-serif;
+      width: 100%;
+      box-sizing: border-box;
+      color: var(--text-main);
+    }
+
+    .calendar-edit-form-wrapper * {
+      box-sizing: border-box;
+    }
+
+    .calendar-edit-form-wrapper h2 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin: 0 0 1.25rem 0;
+      color: var(--text-main);
+    }
+
+    .calendar-edit-form-wrapper .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .calendar-edit-form-wrapper .form-group label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      margin-bottom: 0.375rem;
+    }
+
+    .calendar-edit-form-wrapper .form-control {
+      width: 100%;
+      padding: 0.625rem 0.875rem;
+      font-size: 0.95rem;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      outline: none;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+      background-color: #fff;
+      color: var(--text-main);
+    }
+
+    .calendar-edit-form-wrapper .form-control:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+    }
+
+    .calendar-edit-form-wrapper .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .calendar-edit-form-wrapper .section-label {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-top: 1.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .calendar-edit-form-wrapper .radio-options {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .calendar-edit-form-wrapper .radio-card {
+      position: relative;
+      display: flex;
+      align-items: flex-start;
+      padding: 0.75rem 1rem;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .calendar-edit-form-wrapper .radio-card:hover {
+      border-color: #cbd5e1;
+      background-color: #f8fafc;
+    }
+
+    .calendar-edit-form-wrapper .radio-card input[type="radio"] {
+      margin-top: 0.2rem;
+      margin-right: 0.75rem;
+      accent-color: var(--primary);
+      cursor: pointer;
+    }
+
+    .calendar-edit-form-wrapper .radio-card:has(input:checked) {
+      border-color: var(--primary);
+      background-color: rgba(79, 70, 229, 0.03);
+    }
+
+    .calendar-edit-form-wrapper .radio-card-content {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .calendar-edit-form-wrapper .radio-title {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--text-main);
+    }
+
+    .calendar-edit-form-wrapper .radio-desc {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.125rem;
+    }
+
+    .calendar-edit-form-wrapper .actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.75rem;
+      margin-top: 1.75rem;
+    }
+
+    .calendar-edit-form-wrapper .btn {
+      padding: 0.625rem 1.25rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      border-radius: 8px;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: background-color 0.15s ease;
+    }
+
+    .calendar-edit-form-wrapper .btn-secondary {
+      background-color: #fff;
+      border-color: var(--border-color);
+      color: var(--text-main);
+    }
+
+    .calendar-edit-form-wrapper .btn-secondary:hover {
+      background-color: #f3f4f6;
+    }
+
+    .calendar-edit-form-wrapper .btn-primary {
+      background-color: var(--primary);
+      color: white;
+    }
+
+    .calendar-edit-form-wrapper .btn-primary:hover {
+      background-color: var(--primary-hover);
+    }
+  </style>
+
+  <form id="edit-event-form">
+    <!-- Event Name -->
+    <div class="form-group">
+      <label for="event-title">Event Name</label>
+      <input
+        type="text"
+        id="event-title"
+        class="form-control"
+        placeholder="e.g. Weekly Sync"
+        required
+      />
+    </div>
+
+    <!-- Start & End Time -->
+    <div class="grid-2">
+      <div class="form-group">
+        <label for="start-time">Start Time</label>
+        <input type="datetime-local" id="start-time" class="form-control" required />
+      </div>
+      <div class="form-group">
+        <label for="end-time">End Time</label>
+        <input type="datetime-local" id="end-time" class="form-control" required />
+      </div>
+    </div>
+
+    <!-- Edit Scope Options -->
+    <div class="section-label">Apply changes to:</div>
+    <div class="radio-options">
+      <label class="radio-card">
+        <input type="radio" name="edit-scope" value="single" checked />
+        <div class="radio-card-content">
+          <span class="radio-title">Edit only this event</span>
+          <span class="radio-desc">Changes will apply exclusively to this instance.</span>
+        </div>
+      </label>
+
+      <label class="radio-card">
+        <input type="radio" name="edit-scope" value="all-type" />
+        <div class="radio-card-content">
+          <span class="radio-title">Edit all events of this type</span>
+          <span class="radio-desc">Updates all instances across the entire series.</span>
+        </div>
+      </label>
+
+      <label class="radio-card">
+        <input type="radio" name="edit-scope" value="all-type-time" />
+        <div class="radio-card-content">
+          <span class="radio-title">Edit all events of this type at this time</span>
+          <span class="radio-desc">Updates recurring events in this series that share this timeslot.</span>
+        </div>
+      </label>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="actions">
+      <button type="button" class="btn btn-secondary" id="cancel-edit-btn">Cancel</button>
+      <button type="submit" class="btn btn-primary">Save Changes</button>
+    </div>
+  </form>
+</div>

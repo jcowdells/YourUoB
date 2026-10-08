@@ -1,6 +1,8 @@
 var urlRequestMap = {};
 var urlResponseMap = {};
 
+var resourceMap = {};
+
 function addURLMapping(map, method, url, mapping) {
     method = method.toUpperCase();
 
@@ -128,3 +130,46 @@ window.XMLHttpRequest.prototype.send = function (body) {
 
     return originalSend.apply(this, arguments);
 };
+
+function getResource(filePath) {
+  return new Promise((resolve, reject) => {
+    // 0. check for cache hit
+    if (resourceMap.hasOwnProperty(filePath)) {
+        resolve(resourceMap[filePath]);
+        return;
+    }
+
+    // 1. Generate a unique ID for this request
+    const requestId = 'req_' + Math.random().toString(36).substring(2, 9);
+
+    console.log(`Request ${requestId} made.`);
+    // 2. Set up a temporary listener for the response
+    function handleResponse(event) {
+      if (
+        event.source === window &&
+        event.data?.type === 'EXTENSION_RESOURCE_RESPONSE' &&
+        event.data?.requestId === requestId
+      ) {
+        // Clean up listener once we get our answer
+        window.removeEventListener('message', handleResponse);
+
+        if (event.data.error) {
+          reject(new Error(event.data.error));
+        } else {
+          resourceMap[filePath] = event.data.payload;
+          resolve(event.data.payload);
+        }
+      }
+    }
+
+    window.addEventListener('message', handleResponse);
+
+    // 3. Post the request message to the Content Script
+    window.postMessage({
+      type: 'EXTENSION_RESOURCE_REQUEST',
+      requestId: requestId,
+      filePath: filePath
+    }, '*');
+  });
+}
+

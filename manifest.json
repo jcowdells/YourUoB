@@ -21,6 +21,16 @@
                 "main.js", "calendar.js", "homepage.js"
             ],
 			"world": "MAIN"
-		}
-	]
+		},
+        {
+            "matches": ["*://*.bham.ac.uk/*"],
+            "js": ["loader.js"]
+        }
+	],
+    "web_accessible_resources": [
+        {
+            "resources": ["edit_form.html"],
+            "matches": ["<all_urls>"]
+        }
+    ]
 }
